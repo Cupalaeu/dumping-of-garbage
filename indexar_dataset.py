@@ -84,7 +84,7 @@ def indexar_imagens():
         banco_dados[nova_chave] = {
             "nome_original": arquivo,
             "largura": largura,
-            "comprimento": altura, # Usando "comprimento" conforme seu pedido
+            "altura": altura, # Usando "altura" conforme seu pedido
             "latitude": latitude,
             "longitude": longitude
         }
