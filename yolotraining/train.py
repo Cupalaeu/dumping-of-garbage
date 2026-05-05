@@ -19,10 +19,10 @@ def treinar_modelo_yolo():
     # 3. Execução do Treinamento (Hyperparameters)
     print("\nIniciando o treinamento...")
     resultados = modelo.train(
-        data='data.yaml',        # O caminho para o seu arquivo de mapa
+        data='/home/liaan/Área de trabalho/dumping-of-garbage/yolotraining/data.yaml',        # O caminho para o seu arquivo de mapa
         epochs=100,              # Quantas vezes o modelo verá o dataset completo (Épocas)
         imgsz=640,               # Resolução do Dataloader (mantém o padrão 640x640 na VRAM)
-        batch=64,                # Quantas imagens processar por vez (Na 4090, você pode testar 32 ou 64)
+        batch=16,                # Quantas imagens processar por vez (Na 4090, você pode testar 32 ou 64)
         device=dispositivo,      # Força o uso da GPU mapeada
         patience=20,             # Early Stopping: Para se não melhorar após 20 épocas
         save=True,               # Salva o melhor modelo (.pt) no disco

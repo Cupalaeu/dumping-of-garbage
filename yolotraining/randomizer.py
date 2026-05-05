@@ -6,8 +6,8 @@ import shutil
 # 1. CONFIGURAÇÕES DOS DIRETÓRIOS
 # ==========================================
 # Insira aqui o nome das pastas onde seus arquivos estão agora
-PASTA_ORIGEM_IMAGENS = "minhas_imagens" 
-PASTA_ORIGEM_LABELS = "meus_labels"     
+PASTA_ORIGEM_IMAGENS = "/home/liaan/Área de trabalho/dumping-of-garbage/03. RECORTADOS" 
+PASTA_ORIGEM_LABELS = "/home/liaan/Área de trabalho/dumping-of-garbage/ROTULOS"     
 
 # O nome da pasta raiz que será criada no padrão YOLO
 PASTA_DESTINO_BASE = "dataset"          
@@ -24,7 +24,7 @@ pastas_yolo = [
     f"{PASTA_DESTINO_BASE}/images/train",
     f"{PASTA_DESTINO_BASE}/images/val",
     f"{PASTA_DESTINO_BASE}/images/test",
-    f"{PASTA_DESTINO_BASE}/labels/train",
+    f"{PASTA_DESTINO_BASE}/labels/train", 
     f"{PASTA_DESTINO_BASE}/labels/val",
     f"{PASTA_DESTINO_BASE}/labels/test"
 ]
