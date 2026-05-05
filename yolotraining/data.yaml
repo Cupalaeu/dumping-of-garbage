@@ -1,0 +1,11 @@
+# Caminhos para as pastas de mídia (Recomendação: use caminhos absolutos se der erro)
+path: ./dataset  # Caminho base do dataset
+train: images/train  # Relativo ao caminho base
+val: images/val
+test: images/test
+
+# Número de classes (Number of Classes)
+nc: 5
+
+# Nome das classes (A ordem aqui dita o ID no arquivo .txt. O primeiro é o ID 0)
+names: ['saco', 'entulho', 'poda', 'papelao', 'moveis']
