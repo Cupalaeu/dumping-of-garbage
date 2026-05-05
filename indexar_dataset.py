@@ -3,7 +3,7 @@ import json
 import cv2
 
 # ================= CONFIGURAÇÕES =================
-PASTA_IMAGENS = "01. LIXO ORIGNAL" # <-- ALTERE AQUI para o caminho real
+PASTA_IMAGENS = "01. LIXO ORIGINAL" # <-- ALTERE AQUI para o caminho real
 ARQUIVO_JSON = "dataset_index.json"
 # =================================================
 
