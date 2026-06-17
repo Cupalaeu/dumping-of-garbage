@@ -130,6 +130,24 @@ def draw_bounding_boxes(image_path, label_path, class_names, output_path):
     cv2.imwrite(output_path, img)
     return True
 
+def clean_directory(directory_path):
+    """
+    Safely deletes all contents of a directory without deleting the directory itself.
+    This prevents PermissionError (Access Denied) in syncing environments like OneDrive.
+    """
+    if not os.path.exists(directory_path):
+        os.makedirs(directory_path, exist_ok=True)
+        return
+    for item in os.listdir(directory_path):
+        item_path = os.path.join(directory_path, item)
+        try:
+            if os.path.isfile(item_path) or os.path.islink(item_path):
+                os.unlink(item_path)
+            elif os.path.isdir(item_path):
+                shutil.rmtree(item_path)
+        except Exception as e:
+            print(f"Warning: Could not delete {item_path}. It might be locked by OneDrive. Error: {e}")
+
 def run_consolidation(base_dir=None):
     if base_dir is None:
         # Resolve the root directory relative to this script (src/data/consolidate.py)
@@ -144,9 +162,7 @@ def run_consolidation(base_dir=None):
     
     # Clean output directories to ensure a fresh run without leftover files from previous runs
     for d in [processed_images_dir, processed_labels_dir, visual_dir]:
-        if os.path.exists(d):
-            shutil.rmtree(d)
-        os.makedirs(d, exist_ok=True)
+        clean_directory(d)
     os.makedirs(metadata_dir, exist_ok=True)
     
     # Find all original dataset folders in data/raw
@@ -229,6 +245,9 @@ def run_consolidation(base_dir=None):
             for ext in image_extensions:
                 image_paths.extend(glob.glob(os.path.join(images_src_dir, ext)))
                 
+            # Remove duplicates (case-insensitive filesystem gotcha on Windows)
+            image_paths = list(set(os.path.abspath(p) for p in image_paths))
+            
             # Sort images to maintain a consistent sequence
             image_paths.sort()
             

@@ -5,6 +5,24 @@ import yaml
 import numpy as np
 import pandas as pd
 
+def clean_directory(directory_path):
+    """
+    Safely deletes all contents of a directory without deleting the directory itself.
+    This prevents PermissionError (Access Denied) in syncing environments like OneDrive.
+    """
+    if not os.path.exists(directory_path):
+        os.makedirs(directory_path, exist_ok=True)
+        return
+    for item in os.listdir(directory_path):
+        item_path = os.path.join(directory_path, item)
+        try:
+            if os.path.isfile(item_path) or os.path.islink(item_path):
+                os.unlink(item_path)
+            elif os.path.isdir(item_path):
+                shutil.rmtree(item_path)
+        except Exception as e:
+            print(f"Warning: Could not delete {item_path}. It might be locked by OneDrive. Error: {e}")
+
 def run_split(train_ratio=0.7, val_ratio=0.2, test_ratio=0.1, seed=42, base_dir=None):
     """
     Splits the manually curated dataset into stratified train, validation, and test sets.
@@ -100,10 +118,8 @@ def run_split(train_ratio=0.7, val_ratio=0.2, test_ratio=0.1, seed=42, base_dir=
     for s in splits:
         s_img_dir = os.path.join(dataset_final_dir, s, "images")
         s_lbl_dir = os.path.join(dataset_final_dir, s, "labels")
-        if os.path.exists(os.path.join(dataset_final_dir, s)):
-            shutil.rmtree(os.path.join(dataset_final_dir, s))
-        os.makedirs(s_img_dir, exist_ok=True)
-        os.makedirs(s_lbl_dir, exist_ok=True)
+        clean_directory(s_img_dir)
+        clean_directory(s_lbl_dir)
         
     # 6. Copy files to the final dataset splits
     print("\nCopying files to splits...")
