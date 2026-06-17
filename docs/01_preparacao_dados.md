@@ -10,19 +10,29 @@ Se você está pegando o projeto "do zero", este guia explica a arquitetura, as 
 
 Para entender como os dados caminham no repositório, veja o fluxo abaixo:
 
-```text
-  [data/raw/] (8 datasets brutos)
-        │
-        ▼ (consolidate.py)
-  [data/processed/] (Imagens limpas) ───────► [data/visual/] (Boxes desenhados)
-        │                                             │
-        │                                             ▼ (Ações do Usuário)
-        │                                      [Triagem Manual]
-        │                                 (Deletar imagens ruins/augmentadas)
-        │                                             │
-        ▼ (split.py)                                  │
-  [data/dataset_final/] ◄─────────────────────────────┘ (Lê o que restou)
-    (YOLO Train/Val/Test)
+```mermaid
+flowchart TD
+    Raw["data/raw/ (8 Datasets brutos)"]
+    Consolidate["src/data/consolidate.py"]
+    Processed["data/processed/ (Imagens limpas)"]
+    Visual["data/visual/ (Marcações desenhadas)"]
+    Triagem["Triagem Manual (Deletar fotos ruins no visual/)"]
+    Split["src/data/split.py"]
+    Final["data/dataset_final/ (YOLO Train/Val/Test)"]
+
+    Raw --> Consolidate
+    Consolidate --> Processed
+    Consolidate --> Visual
+    Visual --> Triagem
+    Processed --> Split
+    Triagem -->|Lê apenas o que restou| Split
+    Split --> Final
+
+    style Raw fill:#f9f9f9,stroke:#333,stroke-width:1px
+    style Processed fill:#e1f5fe,stroke:#0288d1,stroke-width:1px
+    style Visual fill:#fffde7,stroke:#fbc02d,stroke-width:1px
+    style Final fill:#e8f5e9,stroke:#388e3c,stroke-width:2px
+    style Triagem fill:#ffebee,stroke:#c62828,stroke-width:1px
 ```
 
 ---
