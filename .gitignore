@@ -216,3 +216,9 @@ __marimo__/
 
 # Streamlit
 .streamlit/secrets.toml
+
+# Markdown folder
+markdown/
+
+# bds_lixos folder
+bds_lixos_originais
