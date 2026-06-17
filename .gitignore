@@ -221,7 +221,5 @@ __marimo__/
 markdown/
 
 # Dataset folders
-data/raw/
-data/processed/
-data/visual/
-data/dataset_final/
+data/
+
