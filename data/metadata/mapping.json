@@ -1,0 +1,100 @@
+{
+  "dt1": {
+    "alias": "dt1",
+    "original_folder": "classificador-de-lixo",
+    "dataset_name": "classificador de lixo > 2024-07-18 8:17pm",
+    "roboflow_url": "https://universe.roboflow.com/lixo-bh-e-rio/classificador-de-lixo",
+    "license": "CC BY 4.0",
+    "classes": [
+      "domestico",
+      "entulho",
+      "lixeiras"
+    ]
+  },
+  "dt2": {
+    "alias": "dt2",
+    "original_folder": "garbage-8uzha",
+    "dataset_name": "garbage > ver1.1",
+    "roboflow_url": "https://universe.roboflow.com/project-r1emy/garbage-8uzha",
+    "license": "CC BY 4.0",
+    "classes": [
+      "black_bag",
+      "red_bag",
+      "white_bag",
+      "yellow_bag"
+    ]
+  },
+  "dt3": {
+    "alias": "dt3",
+    "original_folder": "garbage-byghu",
+    "dataset_name": "garbage > 2022-04-17 2:39am",
+    "roboflow_url": "https://universe.roboflow.com/stella-wu/garbage-byghu",
+    "license": "CC BY 4.0",
+    "classes": [
+      "bag",
+      "cardboard",
+      "furniture",
+      "glass",
+      "metal",
+      "paper",
+      "plastic",
+      "trash",
+      "yard"
+    ]
+  },
+  "dt4": {
+    "alias": "dt4",
+    "original_folder": "garbage-classification-oaf5d",
+    "dataset_name": "garbage classification > 2023-11-15 5:14am",
+    "roboflow_url": "https://universe.roboflow.com/bsuir-wmujb/garbage-classification-oaf5d",
+    "license": "CC BY 4.0",
+    "classes": [
+      "bag",
+      "plastic",
+      "wood"
+    ]
+  },
+  "dt5": {
+    "alias": "dt5",
+    "original_folder": "garbage-mvzg3",
+    "dataset_name": "garbage > 2023-11-17 12:22am",
+    "roboflow_url": "https://universe.roboflow.com/bill-lhxqf/garbage-mvzg3",
+    "license": "CC BY 4.0",
+    "classes": [
+      "bag - v4 2023-05-12 11-25pm",
+      "object"
+    ]
+  },
+  "dt6": {
+    "alias": "dt6",
+    "original_folder": "garbage-ylmfy",
+    "dataset_name": "garbage > 2022-02-12 5:02pm",
+    "roboflow_url": "https://universe.roboflow.com/new-workspace-ne8fu/garbage-ylmfy",
+    "license": "CC BY 4.0",
+    "classes": [
+      "cardboard",
+      "container_small",
+      "garbage_bag"
+    ]
+  },
+  "dt7": {
+    "alias": "dt7",
+    "original_folder": "trash-lstse",
+    "dataset_name": "trash > 2025-09-16 5:23pm",
+    "roboflow_url": "https://universe.roboflow.com/label-zdxee/trash-lstse",
+    "license": "CC BY 4.0",
+    "classes": [
+      "trashbag"
+    ]
+  },
+  "dt8": {
+    "alias": "dt8",
+    "original_folder": "wasteinsight-nopp5",
+    "dataset_name": "WasteInsight > 2024-03-30 11:19am",
+    "roboflow_url": "https://universe.roboflow.com/volumeestimation/wasteinsight-nopp5",
+    "license": "CC BY 4.0",
+    "classes": [
+      "Plastic_Bag"
+    ]
+  }
+}

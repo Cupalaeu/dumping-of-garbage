@@ -220,5 +220,8 @@ __marimo__/
 # Markdown folder
 markdown/
 
-# bds_lixos folder
-bds_lixos_originais
+# Dataset folders
+data/raw/
+data/processed/
+data/visual/
+data/dataset_final/
