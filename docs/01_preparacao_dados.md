@@ -27,7 +27,32 @@ Para entender como os dados caminham no repositório, veja o fluxo abaixo:
 
 ---
 
-## 2. Metodologia de Desenvolvimento: Scripts (.py) vs. Notebooks (.ipynb)
+## 2. Como Obter os Dados (Download do Google Drive)
+
+Para rodar este pipeline localmente, você deve obter a pasta de dados:
+
+1. Acesse a pasta compartilhada no Google Drive: [Acesse aqui](https://drive.google.com/drive/u/0/folders/1mBmlk1TqWhN3xnKuCI4P0qvJtkqK7I6G).
+2. Baixe a pasta `data` completa e extraia-a na raiz do projeto (de forma que o caminho final seja `dumping-of-garbage/data/`).
+
+> [!TIP]
+> **Atalho de Curadoria (Consolidação já executada):**
+> Como já rodamos a consolidação inicial de todas as bases de dados, a pasta `data` no Drive já contém os datasets brutos em `raw/`, as cópias padronizadas em `processed/` e as marcações visuais prontas para triagem em `visual/`.
+> 
+> Ao baixar a pasta inteira, **você não precisa reexecutar a consolidação**. O seu próximo passo imediato será apenas abrir a pasta `data/visual/` localmente e começar a deletar as fotos que não deseja.
+
+### Por que não subir estes arquivos de dados ao repositório Git?
+
+> [!CAUTION]
+> **Subir bases de dados ao Git é considerado uma PÉSSIMA prática de engenharia pelas seguintes razões:**
+>
+> 1. **Inchaço do Repositório (Bloat)**: O Git foi projetado para controlar código-fonte (arquivos de texto leve). Imagens e labels somam gigabytes de arquivos binários pesados. Subi-los deixará o repositório extremamente lento.
+> 2. **Histórico Acumulado e Lento**: Toda vez que uma imagem é adicionada, alterada ou removida, o Git armazena internamente uma cópia completa desse arquivo binário no histórico `.git`. A pasta do repositório crescerá indefinidamente e qualquer `git clone` futuro demorará horas para baixar.
+> 3. **Limitações de Plataformas**: Serviços como o GitHub bloqueiam commits com arquivos individuais maiores que 100MB e limitam o tamanho total do repositório.
+> 4. **Separação de Responsabilidades**: O Git gerencia o **código** (a inteligência). O **dado** (imagens de treino) deve ser mantido e versionado em armazenamentos apropriados (Google Drive, AWS S3, Google Cloud Storage, ou usando ferramentas como DVC).
+
+---
+
+## 3. Metodologia de Desenvolvimento: Scripts (.py) vs. Notebooks (.ipynb)
 
 No desenvolvimento profissional de Machine Learning, adotamos uma abordagem híbrida que une robustez e interatividade:
 
@@ -39,7 +64,7 @@ No desenvolvimento profissional de Machine Learning, adotamos uma abordagem híb
 
 ---
 
-## 3. Justificativa da Curadoria Visual (Filtro de Data Augmentation)
+## 4. Justificativa da Curadoria Visual (Filtro de Data Augmentation)
 
 > [!IMPORTANT]
 > **Por que realizamos triagem manual apagando arquivos de `data/visual/`?**
@@ -53,7 +78,7 @@ No desenvolvimento profissional de Machine Learning, adotamos uma abordagem híb
 
 ---
 
-## 4. Estrutura de Pastas e Componentes
+## 5. Estrutura de Pastas e Componentes
 
 A organização do projeto e a função de cada diretório e arquivo é detalhada a seguir:
 
@@ -81,7 +106,7 @@ dumping-of-garbage/
 
 ---
 
-## 5. Rastreabilidade e Padronização
+## 6. Rastreabilidade e Padronização
 
 Ao juntar 8 datasets diferentes, a maior preocupação é a rastreabilidade e a colisão de nomes. Resolvemos isso em duas frentes:
 
@@ -96,14 +121,14 @@ Toda imagem copiada é registrada em `data/metadata/traceability.csv` guardando 
 
 ---
 
-## 6. Divisão Estratificada (Train, Val, Test)
+## 7. Divisão Estratificada (Train, Val, Test)
 
 Quando o usuário apaga arquivos da pasta `data/visual/` e roda o script de divisão, ele executa um **split estratificado** (padrão: `70% Treino / 20% Validação / 10% Teste`).
 * **O que é e por que usar**: Cada base de dados (`dt1` a `dt8`) tem características de iluminação, câmeras e formatos diferentes. A estratificação garante que a proporção de cada dataset de origem seja mantida constante e proporcional entre os conjuntos de Treino, Validação e Teste. Isso evita que o modelo treine em um tipo de câmera e seja testado em outro completamente diferente, prevenindo o problema de *domain shift* (desvio de domínio).
 
 ---
 
-## 7. Guia Passo a Passo para Execução
+## 8. Guia Passo a Passo para Execução
 
 ### Passo 1: Instalação e Preparação
 Crie e ative o ambiente virtual e instale as dependências:
@@ -113,13 +138,14 @@ python -m venv .venv
 pip install -r requirements.txt
 ```
 
-### Passo 2: Executar Consolidação
-Abra e execute o notebook `notebooks/01_data_consolidation.ipynb` (ou via terminal rodando `python src/data/consolidate.py`). 
-Isso irá varrer `data/raw/`, gerar a rastreabilidade e consolidar as fotos em `data/processed/`, criando a pasta `data/visual/` com os desenhos das anotações. **Labels vazias são limpas automaticamente.**
+### Passo 2: Baixar a Pasta `data`
+Baixe a pasta `data` completa do Google Drive (link na Seção 2) e coloque-a na raiz do projeto. Como ela já vem consolidada e processada, você pode ir direto para o Passo 3.
+
+*(Nota: Se no futuro novas bases brutas forem adicionadas a `data/raw/`, você precisará reexecutar a consolidação abrindo o notebook `notebooks/01_data_consolidation.ipynb` ou executando o comando `python src/data/consolidate.py` para atualizar o processamento).*
 
 ### Passo 3: Triagem Manual
-Abra a pasta `data/visual/` e delete as fotos distorcidas ou ruins.
+Abra a pasta `data/visual/` localmente e **deleta** manualmente as fotos que julgar inválidas ou com augmentations indesejadas.
 
 ### Passo 4: Executar Separação (Split)
 Abra e execute o notebook `notebooks/02_split_dataset.ipynb` (ou via terminal rodando `python src/data/split.py`).
-O script detecta quais arquivos restaram em `data/visual/`, gera o dataset de treino estratificado em `data/dataset_final/` e escreve o `data.yaml` final apontando para os splits.
+O script detecta quais arquivos restaram em `data/visual/`, lê as imagens limpas correspondentes em `data/processed/` e gera o dataset de treino final estratificado em `data/dataset_final/`, atualizando a rastreabilidade final e gravando o `data.yaml`.
