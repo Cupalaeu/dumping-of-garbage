@@ -23,9 +23,9 @@ def clean_directory(directory_path):
         except Exception as e:
             print(f"Warning: Could not delete {item_path}. It might be locked by OneDrive. Error: {e}")
 
-def run_split(train_ratio=0.7, val_ratio=0.2, test_ratio=0.1, seed=42, base_dir=None):
+def run_split(train_ratio=0.8, val_ratio=0.2, seed=42, base_dir=None):
     """
-    Splits the manually curated dataset into stratified train, validation, and test sets.
+    Splits the manually curated dataset into train and validation sets.
     Only considers images that are still present in data/visual/.
     """
     if base_dir is None:
@@ -71,55 +71,43 @@ def run_split(train_ratio=0.7, val_ratio=0.2, test_ratio=0.1, seed=42, base_dir=
         return
         
     # Normalize ratios to sum to 1.0
-    total_ratio = train_ratio + val_ratio + test_ratio
+    total_ratio = train_ratio + val_ratio
     train_ratio /= total_ratio
     val_ratio /= total_ratio
-    test_ratio /= total_ratio
     
-    # 4. Perform stratified split
-    # Stratified split ensures that the proportion of each source dataset is maintained in each split.
-    df_curated['split'] = 'train'
-    
+    # 4. Perform global random split
+    # Shuffling all images together first ensures the splits are randomly mixed,
+    # preventing train/val splits from being composed entirely of a single original dataset.
     rng = np.random.RandomState(seed)
+    indices = df_curated.index.tolist()
+    rng.shuffle(indices)
     
-    split_dfs = []
+    df_curated = df_curated.loc[indices].reset_index(drop=True)
     
-    # Group by original dataset source
-    for dataset_name, group in df_curated.groupby('original_dataset'):
-        indices = group.index.tolist()
-        rng.shuffle(indices)
-        
-        n_total = len(indices)
-        n_train = int(n_total * train_ratio)
-        n_val = int(n_total * val_ratio)
-        
-        train_idx = indices[:n_train]
-        val_idx = indices[n_train:n_train + n_val]
-        test_idx = indices[n_train + n_val:]
-        
-        # In case integer truncation leaves test split empty for tiny sets, distribute leftovers
-        if len(test_idx) == 0 and n_total >= 3 and test_ratio > 0:
-            test_idx = [indices[-1]]
-            if len(val_idx) > 1:
-                val_idx = val_idx[:-1]
-            else:
-                train_idx = train_idx[:-1]
-                
-        group.loc[train_idx, 'split'] = 'train'
-        group.loc[val_idx, 'split'] = 'val'
-        group.loc[test_idx, 'split'] = 'test'
-        
-        split_dfs.append(group)
-        
-    df_final = pd.concat(split_dfs)
+    n_total = len(df_curated)
+    n_train = int(n_total * train_ratio)
+    
+    df_curated['split'] = 'val'
+    df_curated.loc[df_curated.index[:n_train], 'split'] = 'train'
+    
+    df_final = df_curated
     
     # 5. Re-create final dataset directories
-    splits = ['train', 'val', 'test']
+    splits = ['train', 'val']
     for s in splits:
         s_img_dir = os.path.join(dataset_final_dir, s, "images")
         s_lbl_dir = os.path.join(dataset_final_dir, s, "labels")
         clean_directory(s_img_dir)
         clean_directory(s_lbl_dir)
+        
+    # Clean up old test directory if it exists
+    test_dir = os.path.join(dataset_final_dir, "test")
+    if os.path.exists(test_dir):
+        try:
+            shutil.rmtree(test_dir)
+            print(f"Removed old test directory: {test_dir}")
+        except Exception as e:
+            print(f"Warning: Could not remove old test directory {test_dir}. Error: {e}")
         
     # 6. Copy files to the final dataset splits
     print("\nCopying files to splits...")
@@ -158,8 +146,7 @@ def run_split(train_ratio=0.7, val_ratio=0.2, test_ratio=0.1, seed=42, base_dir=
         "names": ["lixo"],
         "nc": 1,
         "train": "train/images",
-        "val": "val/images",
-        "test": "test/images"
+        "val": "val/images"
     }
     unified_yaml_path = os.path.join(dataset_final_dir, "data.yaml")
     with open(unified_yaml_path, 'w', encoding='utf-8') as yf:
@@ -173,7 +160,7 @@ def run_split(train_ratio=0.7, val_ratio=0.2, test_ratio=0.1, seed=42, base_dir=
     print(f"Total dataset: {len(df_final)}")
     print(df_final['split'].value_counts())
     print("-"*40)
-    print("Stratification check (distribution per dataset source):")
+    print("Distribution per dataset source:")
     pivot = df_final.pivot_table(index='original_dataset', columns='split', aggfunc='size', fill_value=0)
     total_series = pivot.sum(axis=1)
     for s in splits:
