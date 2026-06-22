@@ -3,3 +3,5 @@ pandas
 pyyaml
 numpy
 matplotlib
+ultralytics
+jupyterlab
